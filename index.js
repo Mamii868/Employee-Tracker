@@ -1,5 +1,16 @@
 const inquirer = require('inquirer')
 
+const db = mysql.createConnection(
+    {
+      host: 'localhost',
+      // MySQL username,
+      user: 'root',
+      // MySQL password
+      password: 'root',
+      database: 'departments_db'
+    },
+    console.log(`Connected to the departments_db database.`)
+  );
 
 const startMenu = [
     {
@@ -15,7 +26,7 @@ const viewMenu = [
      type: 'list',
      message: 'What would you like to view?',
      name: 'view',
-     choices: ['Departments', 'Roles', 'Employees']
+     choices: ['Departments', 'Roles', 'Employees', 'Back']
     }
 ];
 
@@ -24,18 +35,18 @@ const addMenu = [
         type: 'list',
         message: 'What would you like to add or update?',
         name: 'add',
-        choices: ['Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role']
+        choices: ['Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role', 'Back']
     }
 ];
 
- function program(){ 
+ function mainMenu(){ 
     inquirer.prompt(startMenu)
     .then((answers) => {
-        chamgeMainMenu(answers)
+        changeMainMenu(answers)
     })
  }
 
-function chamgeMainMenu(answers) {
+function changeMainMenu(answers) {
     switch(answers.menu) {
         case 'View Menu':
             showViewMenu()
@@ -62,4 +73,53 @@ function showAddMenu() {
     })
 }
 
- program();
+function changeViewMenu(answers) {
+    switch (answers.view) {
+        case 'Departments':
+            showAllDepartments();
+            break;
+        case 'Roles': 
+            showAllRoles();
+            break;
+        case 'Employees':
+            showAllEmployees();
+            break;
+        case 'Back':
+            mainMenu()
+            break;
+    }
+}
+
+function changeAddMenu(answers) {
+    switch (answers.add) {
+        case 'Add a Department':
+            addDepartment()
+            break;
+        case 'Add a Role':
+            addRole()
+            break;
+        case 'Add an Employee':
+            addEmployee();
+            break;
+        case 'Update An Employee Role':
+            updateEmployeeRole();
+            break;
+        case 'Back':
+            mainMenu()
+            break;
+    }
+};
+
+function showAllEmployees() {
+    db.query('SELECT * FROM employee', function (err, results) {
+        console.log(results);
+    })  
+  };
+
+function showAllDepartments() {
+    db.query('SELECT * FROM department', function (err, results) {
+        console.log(results);
+    })  
+}
+
+ mainMenu();
