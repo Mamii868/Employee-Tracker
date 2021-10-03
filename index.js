@@ -49,30 +49,7 @@ const addDepartmentPrompt = [
 ]
 
 const addEmployeePrompt = [
-    {
-        type: 'input',
-        message: "Please enter employee's first name",
-        name: 'first_name'
-    },
-    {
-        type: 'input',
-        message: "Please enter employee's last name",
-        name: 'last_name'
-    },
-    {
-        type: 'list',
-        message: "What is the employee's role?",
-        name: 'role',
-        choices: roleList,
-        default: "no assigned role"
-    },
-    {
-        type: 'list',
-        message: "who is the manager?",
-        name: 'manager',
-        choices: managerList,
-        default: "no assigned manager"
-    }
+   
 ]
 
  function mainMenu(){ 
@@ -165,6 +142,7 @@ function addEmployeeMenu() {
                 return {id:info.id, name:info.first_name, name:info.last_name}
             }
         )
+        return managerList;
     })
 
     db.query('SELECT id, title FROM role', function (err, results) {
@@ -173,9 +151,35 @@ function addEmployeeMenu() {
                 return {id:info.id, name:info.title}
             }
         )
+        return roleList;
     })
 
-    inquirer.prompt(addEmployeePrompt)
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: "Please enter employee's first name",
+            name: 'first_name'
+        },
+        {
+            type: 'input',
+            message: "Please enter employee's last name",
+            name: 'last_name'
+        },
+        {
+            type: 'list',
+            message: "What is the employee's role?",
+            name: 'role',
+            choices: roleList,
+            default: "no assigned role"
+        },
+        {
+            type: 'list',
+            message: "who is the manager?",
+            name: 'manager',
+            choices: managerList,
+            default: "no assigned manager"
+        }
+    ])
     .then((answers) => {
         addEmployee(answers)
     })
