@@ -102,7 +102,7 @@ function changeViewMenu(answers) {
 function changeAddMenu(answers) {
     switch (answers.add) {
         case 'Add a Department':
-            showAllDepartments();
+            departmentList();
             addDepartmentMenu();
             break;
         case 'Add a Role':
@@ -110,11 +110,11 @@ function changeAddMenu(answers) {
             addRole();
             break;
         case 'Add an Employee':
-            showAllEmployees();
+            employeeList();
             addEmployee();
             break;
         case 'Update An Employee Role':
-            showAllEmployees();
+            employeeList();
             updateEmployeeRole();
             break;
         case 'Back':
@@ -144,6 +144,13 @@ function showAllDepartments() {
         mainMenu();
     })  
 }
+
+function showAllRoles() {
+    db.query('SELECT * FROM role', function (err, results) {
+        console.table(results);
+        mainMenu();
+    })
+}
 // Takes answers and adds rows to tables
 function addDepartment(answers) {
     db.query(`INSERT INTO department (name) VALUES ('${answers.name}')`, function (err, results) {
@@ -154,10 +161,16 @@ function addDepartment(answers) {
 }
 
 function addEmployee(answers) {
-
+    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answers.name}')`, function (err, results) {
+        console.log("added " + results.affectedRows + " Employee/s")
+        showAllDepartments();
+    })
 }
 
-function addRole(answers) {}
+function addRole(answers) {
+    db.query(`INSERT INTO role (title, salary) VALUES ('${answers.title}', '${answers.salary}')`, function (err, results) {
+        console.log("added " + results.affectedRows + " role/s")})
+}
 
 //Used to display data without redirecting to the Main Menu
 function departmentList() {
