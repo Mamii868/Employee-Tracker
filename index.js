@@ -63,13 +63,15 @@ const addEmployeePrompt = [
         type: 'list',
         message: "What is the employee's role?",
         name: 'role',
-        choices: roleList
+        choices: roleList,
+        default: "no assigned role"
     },
     {
         type: 'list',
         message: "who is the manager?",
         name: 'manager',
-        choices: managerList
+        choices: managerList,
+        default: "no assigned manager"
     }
 ]
 
@@ -157,10 +159,18 @@ function addDepartmentMenu() {
 
 function addEmployeeMenu() {
     
-    db.query('SELECT first_name, last_name, manager_id FROM employee', function (err, results) {
+    db.query('SELECT id, first_name, last_name, manager_id FROM employee', function (err, results) {
         const managerList = results.map(
             (info) => {
-                return {name:info.first_name, name:info.last_name}
+                return {id:info.id, name:info.first_name, name:info.last_name}
+            }
+        )
+    })
+
+    db.query('SELECT id, title FROM role', function (err, results) {
+        const roleList = results.map(
+            (info) => {
+                return {id:info.id, name:info.title}
             }
         )
     })
@@ -201,14 +211,16 @@ function addDepartment(answers) {
 }
 
 function addEmployee(answers) {
-    db.query(`INSERT INTO employee (first_name, last_name, role_id,) VALUES ('${answers.name}')`, function (err, results) {
+    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answers.first_name}, ${answers.last_name}, ${answers.role}, ${answers.manager}')`, function (err, results) {
         console.log("added " + results.affectedRows + " Employee/s")
     })
+    showAllEmployees();
 }
 
 function addRole(answers) {
     db.query(`INSERT INTO role (title, salary) VALUES ('${answers.title}', '${answers.salary}')`, function (err, results) {
         console.log("added " + results.affectedRows + " role/s")})
+        showAllRoles();
 }
 
 //Used to display data without redirecting to the Main Menu
