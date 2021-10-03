@@ -60,14 +60,16 @@ const addEmployeePrompt = [
         name: 'last_name'
     },
     {
-        type: 'input',
+        type: 'list',
         message: "What is the employee's role?",
-        name: 'role'
+        name: 'role',
+        choices: roleList
     },
     {
-        type: 'confirm',
-        message: "Is the employee a manager?",
-        name: 'managerStatus'
+        type: 'list',
+        message: "who is the manager?",
+        name: 'manager',
+        choices: managerList
     }
 ]
 
@@ -134,7 +136,7 @@ function changeAddMenu(answers) {
             break;
         case 'Add an Employee':
             employeeList();
-            addEmployee();
+            addEmployeeMenu();
             break;
         case 'Update An Employee Role':
             employeeList();
@@ -153,6 +155,21 @@ function addDepartmentMenu() {
     })
 }
 
+function addEmployeeMenu() {
+    
+    db.query('SELECT first_name, last_name, manager_id FROM employee', function (err, results) {
+        const managerList = results.map(
+            (info) => {
+                return {name:info.first_name, name:info.last_name}
+            }
+        )
+    })
+
+    inquirer.prompt(addEmployeePrompt)
+    .then((answers) => {
+        addEmployee(answers)
+    })
+}
 
 function showAllEmployees() {
     db.query('SELECT * FROM employee', function (err, results) {
@@ -184,9 +201,8 @@ function addDepartment(answers) {
 }
 
 function addEmployee(answers) {
-    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answers.name}')`, function (err, results) {
+    db.query(`INSERT INTO employee (first_name, last_name, role_id,) VALUES ('${answers.name}')`, function (err, results) {
         console.log("added " + results.affectedRows + " Employee/s")
-        showAllDepartments();
     })
 }
 
