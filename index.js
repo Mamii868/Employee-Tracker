@@ -48,6 +48,29 @@ const addDepartmentPrompt = [
     }
 ]
 
+const addEmployeePrompt = [
+    {
+        type: 'input',
+        message: "Please enter employee's first name",
+        name: 'first_name'
+    },
+    {
+        type: 'input',
+        message: "Please enter employee's last name",
+        name: 'last_name'
+    },
+    {
+        type: 'input',
+        message: "What is the employee's role?",
+        name: 'role'
+    },
+    {
+        type: 'confirm',
+        message: "Is the employee a manager?",
+        name: 'managerStatus'
+    }
+]
+
  function mainMenu(){ 
     inquirer.prompt(startMenu)
     .then((answers) => {
