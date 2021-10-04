@@ -225,14 +225,13 @@ function employeeList() {
 //Starts program
 //  mainMenu();
 
-function testInfo () {
+async function testInfo () {
     let managerList = [];
-    let managerQuery =  db.query('SELECT * FROM employee WHERE manager_id IS NULL', function (err, results) {
-        // results.forEach(element => {
-        //     managerList.push(element['manager_id, last_name'])
-        // });
-        console.log(results)
-    })
+    let managerQuery =  await db.promise().query('SELECT * FROM employee WHERE manager_id IS NULL')
+    managerQuery[0].forEach(element => {
+        managerList.push(element.first_name);
+    });
+    console.log(managerList)
    
     // const roleList =  db.query('SELECT id, title FROM role', function (err, results) {
     //   console.log(results)
