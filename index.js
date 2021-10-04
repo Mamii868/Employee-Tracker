@@ -226,9 +226,13 @@ function employeeList() {
 //Starts program
 //  mainMenu();
 
- function testInfo () {
-    const managerList =  db.query('SELECT id, first_name, last_name, manager_id FROM employee', function (err, results) {
-        console.log(results)
+async function testInfo () {
+    let managerList = [];
+    let managerQuery =  await db.query('SELECT last_name FROM employee', function (err, results) {
+        results.forEach(element => {
+            managerList.push(element['last_name'])
+        });
+        console.log(managerList)
     })
    
     // const roleList =  db.query('SELECT id, title FROM role', function (err, results) {
