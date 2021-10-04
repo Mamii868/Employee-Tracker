@@ -8,7 +8,6 @@ const db = mysql.createConnection(
       user: 'root',
       // MySQL password
       password: 'root',
-      rowsAsArray: true,
       database: 'departments_db'
     },
     console.log(`Connected to the departments_db database.`)
@@ -226,13 +225,13 @@ function employeeList() {
 //Starts program
 //  mainMenu();
 
-async function testInfo () {
+function testInfo () {
     let managerList = [];
-    let managerQuery =  await db.query('SELECT last_name FROM employee', function (err, results) {
-        results.forEach(element => {
-            managerList.push(element['last_name'])
-        });
-        console.log(managerList)
+    let managerQuery =  db.query('SELECT * FROM employee WHERE manager_id IS NULL', function (err, results) {
+        // results.forEach(element => {
+        //     managerList.push(element['manager_id, last_name'])
+        // });
+        console.log(results)
     })
    
     // const roleList =  db.query('SELECT id, title FROM role', function (err, results) {
