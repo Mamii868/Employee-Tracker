@@ -8,6 +8,7 @@ const db = mysql.createConnection(
       user: 'root',
       // MySQL password
       password: 'root',
+      rowsAsArray: true,
       database: 'departments_db'
     },
     console.log(`Connected to the departments_db database.`)
@@ -135,24 +136,7 @@ function addDepartmentMenu() {
 }
 
 function addEmployeeMenu() {
-    
-    db.query('SELECT id, first_name, last_name, manager_id FROM employee', function (err, results) {
-        const managerList = results.map(
-            (info) => {
-                return {id:info.id, name:info.first_name, name:info.last_name}
-            }
-        )
-        return managerList;
-    })
 
-    db.query('SELECT id, title FROM role', function (err, results) {
-        const roleList = results.map(
-            (info) => {
-                return {id:info.id, name:info.title}
-            }
-        )
-        return roleList;
-    })
 
     inquirer.prompt([
         {
@@ -240,4 +224,16 @@ function employeeList() {
 }
 
 //Starts program
- mainMenu();
+//  mainMenu();
+
+ function testInfo () {
+    const managerList =  db.query('SELECT id, first_name, last_name, manager_id FROM employee', function (err, results) {
+        console.log(results)
+    })
+   
+    // const roleList =  db.query('SELECT id, title FROM role', function (err, results) {
+    //   console.log(results)
+    // })
+    // console.log(managerList, roleList)
+ }
+ testInfo();
