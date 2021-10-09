@@ -48,10 +48,6 @@ const addDepartmentPrompt = [
     }
 ]
 
-const addEmployeePrompt = [
-   
-]
-
  function mainMenu(){ 
     inquirer.prompt(startMenu)
     .then((answers) => {
@@ -135,7 +131,16 @@ function addDepartmentMenu() {
 }
 
 function addEmployeeMenu() {
-
+       db.query('SELECT first_name, last_name, id FROM employee', (err,data) => {    
+        let managerList = data.map(info => {
+            return {name: info.first_name, name: info.last_name, value: info.id}
+         });
+    
+        db.query('SELECT id, title FROM role', (err, data) => {
+        let roleList =  data.map(info => {
+            return {name: info.title, value: info.id}
+        });
+    
 
     inquirer.prompt([
         {
@@ -152,21 +157,21 @@ function addEmployeeMenu() {
             type: 'list',
             message: "What is the employee's role?",
             name: 'role',
-            choices: roleList,
-            default: "no assigned role"
+            choices: roleList
         },
         {
             type: 'list',
             message: "who is the manager?",
             name: 'manager',
-            choices: managerList,
-            default: "no assigned manager"
+            choices: managerList
         }
     ])
     .then((answers) => {
         addEmployee(answers)
+        console.log(answers)
     })
-}
+})})};
+
 
 function showAllEmployees() {
     db.query('SELECT * FROM employee', function (err, results) {
@@ -191,22 +196,29 @@ function showAllRoles() {
 // Takes answers and adds rows to tables
 function addDepartment(answers) {
     db.query(`INSERT INTO department (name) VALUES ('${answers.name}')`, function (err, results) {
-        console.log("added " + results.affectedRows + " Department/s")
+        console.log("added Department")
         showAllDepartments();
     })
     
 }
 
-function addEmployee(answers) {
-    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answers.first_name}, ${answers.last_name}, ${answers.role}, ${answers.manager}')`, function (err, results) {
-        console.log("added " + results.affectedRows + " Employee/s")
+  function addEmployee(answers) {
+    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answers.first_name}', '${answers.last_name}', '${answers.role}', '${answers.manager}')`, function (err, results) {
+        if (err) console.log(err)
+        console.log("added Employee")
+        showAllEmployees();
     })
-    showAllEmployees();
+}
+
+async function addEmployee2(answers) {
+
+    
 }
 
 function addRole(answers) {
     db.query(`INSERT INTO role (title, salary) VALUES ('${answers.title}', '${answers.salary}')`, function (err, results) {
-        console.log("added " + results.affectedRows + " role/s")})
+        if (err) console.log(err)
+        console.log("added role")})
         showAllRoles();
 }
 
@@ -223,19 +235,4 @@ function employeeList() {
 }
 
 //Starts program
-//  mainMenu();
-
-async function testInfo () {
-    let managerList = [];
-    let managerQuery =  await db.promise().query('SELECT * FROM employee WHERE manager_id IS NULL')
-    managerQuery[0].forEach(element => {
-        managerList.push(element.first_name);
-    });
-    console.log(managerList)
-   
-    // const roleList =  db.query('SELECT id, title FROM role', function (err, results) {
-    //   console.log(results)
-    // })
-    // console.log(managerList, roleList)
- }
- testInfo();
+ mainMenu();
