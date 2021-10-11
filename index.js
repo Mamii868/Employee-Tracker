@@ -234,21 +234,21 @@ function updateEmployeeMenu() {
 
 
 function showAllEmployees() {
-    db.query('SELECT * FROM employee', function (err, results) {
+    db.query(`SELECT employee.id AS 'ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary AS 'Salary', manager_id AS 'Manager ID' FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id`, function (err, results) {
         console.table(results);
         mainMenu();
-    })  
+    })    
   };
 
 function showAllDepartments() {
-    db.query('SELECT * FROM department', function (err, results) {
+    db.query(`SELECT department.id AS 'ID', department.name AS 'Name' FROM department`, function (err, results) {
         console.table(results);
         mainMenu();
     })  
 }
 
 function showAllRoles() {
-    db.query('SELECT * FROM role', function (err, results) {
+    db.query(`SELECT role.id AS 'ID', role.title AS 'Title', role.salary AS 'Salary', department.name AS 'Department' FROM role INNER JOIN department ON role.department_id = department.id`, function (err, results) {
         console.table(results);
         mainMenu();
     })
@@ -287,18 +287,18 @@ function updateEmployee(answers) {
 
 //Used to display data without redirecting to the Main Menu
 function departmentList() {
-    db.query('SELECT * FROM department', function (err, results) {
+    db.query(`SELECT department.id AS 'ID', department.name AS 'Name' FROM department`, function (err, results) {
         console.table(results);
     })  
 }
 function employeeList() {
-    db.query('SELECT * FROM employee', function (err, results) {
+    db.query(`SELECT employee.id AS 'ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary AS 'Salary', manager_id AS 'Manager ID' FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id`, function (err, results) {
         console.table(results);
     })  
 }
 
 function roleMenu() {
-    db.query('SELECT * FROM role', function (err, results) {
+    db.query(`SELECT role.id AS 'ID', role.title AS 'Title', role.salary AS 'Salary', department.name AS 'Department' FROM role INNER JOIN department ON role.department_id = department.id`, function (err, results) {
         console.table(results);
     })
 }
