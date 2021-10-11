@@ -1,5 +1,6 @@
 const inquirer = require('inquirer')
 const mysql = require('mysql2')
+const cTable = require('console.table')
 
 const db = mysql.createConnection(
     {
@@ -46,7 +47,8 @@ const addDepartmentPrompt = [
         message: 'Please enter new department name',
         name: 'name'
     }
-]
+];
+
 
  function mainMenu(){ 
     inquirer.prompt(startMenu)
@@ -106,16 +108,16 @@ function changeAddMenu(answers) {
             addDepartmentMenu();
             break;
         case 'Add a Role':
-            showAllRoles();
-            addRole();
+            roleMenu();
+            addRoleMenu();
             break;
         case 'Add an Employee':
             employeeList();
             addEmployeeMenu();
             break;
-        case 'Update An Employee Role':
+        case 'Update an Employee Role':
             employeeList();
-            updateEmployeeRole();
+            updateEmployeeMenu();
             break;
         case 'Back':
             mainMenu()
@@ -133,7 +135,7 @@ function addDepartmentMenu() {
 function addEmployeeMenu() {
        db.query('SELECT first_name, last_name, id FROM employee', (err,data) => {    
         let managerList = data.map(info => {
-            return {name: info.first_name, name: info.last_name, value: info.id}
+            return {name: info.first_name + ' ' + info.last_name, value: info.id}
          });
     
         db.query('SELECT id, title FROM role', (err, data) => {
@@ -170,6 +172,64 @@ function addEmployeeMenu() {
         addEmployee(answers)
         console.log(answers)
     })
+})})};
+
+function addRoleMenu() {
+    db.query('SELECT id, name FROM department', (err, data) => {
+        let departmentList =  data.map(info => {
+            return {name: info.name, value: info.id}
+        });
+    inquirer.prompt([ 
+    {
+        type: 'input',
+        message: 'Please enter new role name',
+        name:'title'
+    },
+    {
+        type: 'input',
+        message: 'Please enter the salary (use whole number with no commas)',
+        name: 'salary'
+    },
+    {
+        type: 'list',
+        message: 'What department does the role belong to?',
+        name: 'department',
+        choices: departmentList
+    }])
+    .then((answers) => {
+        addRole(answers);
+    })
+})};
+
+function updateEmployeeMenu() {
+    db.query('SELECT first_name, last_name, id FROM employee', (err,data) => {
+        if (err) throw err;    
+        let employees = data.map(info => {
+            return {name: info.first_name + ' ' + info.last_name, value: info.id}
+         });
+         db.query('SELECT id, title FROM role', (err, data) => {
+             if (err) throw err;
+            let roleList =  data.map(info => {
+                return {name: info.title, value: info.id}
+            });
+
+         inquirer.prompt([
+            {
+                type: 'list',
+                message: "Please select the employee you want to update",
+                name: 'employee',
+                choices: employees
+            },
+            {
+                type: 'list',
+                message: "What role do you want to give?",
+                name: 'roleId',
+                choices: roleList
+            }
+        ]).then((answers) => {
+            updateEmployee(answers);
+        })
+
 })})};
 
 
@@ -210,16 +270,19 @@ function addDepartment(answers) {
     })
 }
 
-async function addEmployee2(answers) {
-
-    
-}
-
 function addRole(answers) {
-    db.query(`INSERT INTO role (title, salary) VALUES ('${answers.title}', '${answers.salary}')`, function (err, results) {
+    db.query(`INSERT INTO role (title, salary, department_id) VALUES ('${answers.title}', '${answers.salary}', '${answers.department}')`, function (err, results) {
         if (err) console.log(err)
         console.log("added role")})
         showAllRoles();
+}
+
+function updateEmployee(answers) {
+    db.query(`UPDATE employee SET role_id = '${answers.roleId}'WHERE id = '${answers.employee}'`, function (err, results) {
+        if (err) console.log(err)
+        console.log("updated Employee")
+        showAllEmployees();
+    })
 }
 
 //Used to display data without redirecting to the Main Menu
@@ -232,6 +295,12 @@ function employeeList() {
     db.query('SELECT * FROM employee', function (err, results) {
         console.table(results);
     })  
+}
+
+function roleMenu() {
+    db.query('SELECT * FROM role', function (err, results) {
+        console.table(results);
+    })
 }
 
 //Starts program
